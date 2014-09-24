@@ -1362,6 +1362,11 @@ def movingaverage (values, window):
     sma = np.convolve(values, weights, 'valid')
     return sma
 
+"""
+THe following code is not mine - it's taken from the scipy cookbook (http://wiki.scipy.org/Cookbook/SignalSmooth).
+Need to fix and import as module
+"""
+
 def smooth(x,window_len=20,window='hamming'):
     """smooth the data using a window with requested size.
     
@@ -1418,6 +1423,10 @@ def smooth(x,window_len=20,window='hamming'):
 
     y=numpy.convolve(w/w.sum(),s,mode='valid')
     return y[(window_len/2-1):-(window_len/2)]
+
+"""End scipy cookbook code
+"""
+   
 
 
    
