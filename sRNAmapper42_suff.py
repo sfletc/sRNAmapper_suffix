@@ -20,7 +20,8 @@ from collections import Counter
 import time
 import argparse
 import csv
-from suffix_tree import *
+import os
+# from suffix_tree import *
       
 class User_Input(object):
     """The command line class. Sets up the command line interface.
@@ -47,7 +48,6 @@ class User_Input(object):
         
         parser.add_argument("-s1", "--seqfile1", type=str,
                 help = "sequence file name 1")
-                
         parser.add_argument("-s2", "--seqfile2", type=str,
                 help = "sequence file name 2")
 
@@ -237,6 +237,7 @@ class Analysis(object):
         start = time.clock()
         samp1 = self._samp1.align_seq(seq_dict[0], ref_dict, nt1).hit_counter()
         out_samp1 = Out_Put(samp1)
+
         out_samp1.write2csv(out_file).den_map_plot(seq1, ref1, a, w)  
         
 
@@ -585,39 +586,39 @@ class Ref_Dict(Dicter):
         
         return self.ref_dict
         
-    def suffix_ref(self, ref_filename):
-        self.filename = Dict_File(ref_filename)
-        self.loaded_ref = self.filename.load_dict()
-                
-        full_len_seq = ''
-        key=''
-        for line in self.loaded_ref:
-            
-            clean_line=line.strip()
-            
-            if line[0] == '>' and full_len_seq == '':
-                key = clean_line
-            elif line[0] == '>' and full_len_seq != '':
-                self.ref_dict.update({'f'+ key:SuffixTree(DNA(full_len_seq))})
-                self.ref_dict.update({'r'+ key:SuffixTree(DNA(full_len_seq).complement())})
-                key=clean_line
-                full_len_seq = ''
-            
-            elif line[0] == '' and full_len_seq != '':
-                self.ref_dict.update({'f'+ key:SuffixTree(DNA(full_len_seq))})
-                self.ref_dict.update({'r'+ key:SuffixTree(DNA(full_len_seq).complement())})
-                key=clean_line
-                full_len_seq = ''   
-            
-            elif line[0] =='':
-                pass
-            
-            else: 
-                full_len_seq += clean_line.upper()
-        
-        self.ref_dict.update({'f'+ key:SuffixTree(DNA(full_len_seq))})
-        self.ref_dict.update({'r'+ key:SuffixTree(DNA(full_len_seq).complement())})
-        return self.ref_dict
+    # def suffix_ref(self, ref_filename):
+    #     self.filename = Dict_File(ref_filename)
+    #     self.loaded_ref = self.filename.load_dict()
+    #
+    #     full_len_seq = ''
+    #     key=''
+    #     for line in self.loaded_ref:
+    #
+    #         clean_line=line.strip()
+    #
+    #         if line[0] == '>' and full_len_seq == '':
+    #             key = clean_line
+    #         elif line[0] == '>' and full_len_seq != '':
+    #             self.ref_dict.update({'f'+ key:SuffixTree(DNA(full_len_seq))})
+    #             self.ref_dict.update({'r'+ key:SuffixTree(DNA(full_len_seq).complement())})
+    #             key=clean_line
+    #             full_len_seq = ''
+    #
+    #         elif line[0] == '' and full_len_seq != '':
+    #             self.ref_dict.update({'f'+ key:SuffixTree(DNA(full_len_seq))})
+    #             self.ref_dict.update({'r'+ key:SuffixTree(DNA(full_len_seq).complement())})
+    #             key=clean_line
+    #             full_len_seq = ''
+    #
+    #         elif line[0] =='':
+    #             pass
+    #
+    #         else:
+    #             full_len_seq += clean_line.upper()
+    #
+    #     self.ref_dict.update({'f'+ key:SuffixTree(DNA(full_len_seq))})
+    #     self.ref_dict.update({'r'+ key:SuffixTree(DNA(full_len_seq).complement())})
+    #     return self.ref_dict
 
     def get_ref_sRNA(self, ref_filename):
         """Load file in fasta format.  Converts U to T (ie RNA to DNA).
@@ -702,9 +703,7 @@ class Seq_Dict(Dicter):
         self.loaded_seq = self.filename.load_dict()
         count = 0
         for i in self.loaded_seq:
-        
-            a = i.strip() 
-
+            a = i.strip()
             b = a.split('\t')
             count += int(b[1])
             if int(b[0]) == nt:
@@ -863,7 +862,8 @@ class Align_Seq(object):
         """need to remove nt from calling functions as not needed.  Also f and count_start
         """
 
-        for header, seq in ref_dict1.items():
+        for \
+            header, seq in ref_dict1.items():
 
             if seq in seq_dict1:
                 self._results.append([header, seq, int(seq_dict1[seq]), 0, 'f'])
