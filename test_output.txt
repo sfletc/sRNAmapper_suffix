@@ -1,8 +1,0 @@
-Ref_seq_ID,sRNA_seq,count,pos_from_5'_fwd,Fwd_or_Rvs
->GFP,ACCAT,-27.0,5,r
->GFP,ATGGT,20.0,0,f
->GFP,TGCTC,-25.0,10,r
->RFP,AAAAA,27.0,8,f
->RFP,ACGTA,345.0,4,f
->RFP,TCCAT,-111.0,5,r
->RFP,TTTTT,-200.0,13,r
