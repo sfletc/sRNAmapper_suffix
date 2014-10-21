@@ -20,7 +20,7 @@ from collections import Counter
 import time
 import argparse
 import csv
-from suffix_tree import *
+# from suffix_tree import *
       
 class User_Input(object):
     """The command line class. Sets up the command line interface.
@@ -585,39 +585,39 @@ class Ref_Dict(Dicter):
         
         return self.ref_dict
         
-    def suffix_ref(self, ref_filename):
-        self.filename = Dict_File(ref_filename)
-        self.loaded_ref = self.filename.load_dict()
-                
-        full_len_seq = ''
-        key=''
-        for line in self.loaded_ref:
-            
-            clean_line=line.strip()
-            
-            if line[0] == '>' and full_len_seq == '':
-                key = clean_line
-            elif line[0] == '>' and full_len_seq != '':
-                self.ref_dict.update({'f'+ key:SuffixTree(DNA(full_len_seq))})
-                self.ref_dict.update({'r'+ key:SuffixTree(DNA(full_len_seq).complement())})
-                key=clean_line
-                full_len_seq = ''
-            
-            elif line[0] == '' and full_len_seq != '':
-                self.ref_dict.update({'f'+ key:SuffixTree(DNA(full_len_seq))})
-                self.ref_dict.update({'r'+ key:SuffixTree(DNA(full_len_seq).complement())})
-                key=clean_line
-                full_len_seq = ''   
-            
-            elif line[0] =='':
-                pass
-            
-            else: 
-                full_len_seq += clean_line.upper()
-        
-        self.ref_dict.update({'f'+ key:SuffixTree(DNA(full_len_seq))})
-        self.ref_dict.update({'r'+ key:SuffixTree(DNA(full_len_seq).complement())})
-        return self.ref_dict
+    # def suffix_ref(self, ref_filename):
+    #     self.filename = Dict_File(ref_filename)
+    #     self.loaded_ref = self.filename.load_dict()
+    #
+    #     full_len_seq = ''
+    #     key=''
+    #     for line in self.loaded_ref:
+    #
+    #         clean_line=line.strip()
+    #
+    #         if line[0] == '>' and full_len_seq == '':
+    #             key = clean_line
+    #         elif line[0] == '>' and full_len_seq != '':
+    #             self.ref_dict.update({'f'+ key:SuffixTree(DNA(full_len_seq))})
+    #             self.ref_dict.update({'r'+ key:SuffixTree(DNA(full_len_seq).complement())})
+    #             key=clean_line
+    #             full_len_seq = ''
+    #
+    #         elif line[0] == '' and full_len_seq != '':
+    #             self.ref_dict.update({'f'+ key:SuffixTree(DNA(full_len_seq))})
+    #             self.ref_dict.update({'r'+ key:SuffixTree(DNA(full_len_seq).complement())})
+    #             key=clean_line
+    #             full_len_seq = ''
+    #
+    #         elif line[0] =='':
+    #             pass
+    #
+    #         else:
+    #             full_len_seq += clean_line.upper()
+    #
+    #     self.ref_dict.update({'f'+ key:SuffixTree(DNA(full_len_seq))})
+    #     self.ref_dict.update({'r'+ key:SuffixTree(DNA(full_len_seq).complement())})
+    #     return self.ref_dict
 
     def get_ref_sRNA(self, ref_filename):
         """Load file in fasta format.  Converts U to T (ie RNA to DNA).
