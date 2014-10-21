@@ -11,6 +11,7 @@
 //     or implied. See the License for the specific language governing
 //     permissions and limitations under the Lircense.
 #include <stdio.h>
+#include <ctype.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <inttypes.h>
@@ -170,49 +171,50 @@ ReadFASTA(FASTAFILE *ffp, char **ret_seq, char **ret_name, int *ret_L)
   char *s;
   char *name;
   char *seq;
-//  int *seq_length;
   int   n;
   int   nalloc;
 
   /* Peek at the lookahead buffer; see if it appears to be a valid FASTA descline.
-     */
-    if (ffp->buffer[0] != '>') return 0;
+   */
+  if (ffp->buffer[0] != '>') return 0;
 
-    /* Parse out the name: the first non-whitespace token after the >
-     * Jason: Altered this to allow spaces and terminate at newline
-     */
-    s  = strtok(ffp->buffer+1, "\t\n");
-    name = malloc(sizeof(char) * (strlen(s)+1));
-    strcpy(name, s);
+  /* Parse out the name: the first non-whitespace token after the >
+   */
+  s  = strtok(ffp->buffer+1, "\t\n");
+  name = malloc(sizeof(char) * (strlen(s)+1));
+  strcpy(name, s);
 
-    /* Everything else 'til the next descline is the sequence.
-     * Note the idiom for dynamic reallocation of seq as we
-     * read more characters, so we don't have to assume a maximum
-     * sequence length.
-     */
-    seq = malloc(sizeof(char) * 128);     /* allocate seq in blocks of 128 residues */
-    nalloc = 128;
-    n = 0;
-    while (fgets(ffp->buffer, FASTA_MAXLINE, ffp->fp))
-      {
-        if (ffp->buffer[0] == '>') break;	/* a-ha, we've reached the next descline */
+  /* Everything else 'til the next descline is the sequence.
+   * Note the idiom for dynamic reallocation of seq as we
+   * read more characters, so we don't have to assume a maximum
+   * sequence length.
+   */
+  seq = malloc(sizeof(char) * 128);     /* allocate seq in blocks of 128 residues */
+  nalloc = 128;
+  n = 0;
+  while (fgets(ffp->buffer, FASTA_MAXLINE, ffp->fp))
+    {
+      if (ffp->buffer[0] == '>') break;	/* a-ha, we've reached the next descline */
 
-        for (s = ffp->buffer; *s != '\0'; s++)
-  	{
-      //Only accept sequence characters
+      for (s = ffp->buffer; *s != '\0'; s++)
+	{
+//	  if (! isalpha(*s)) continue;  /* accept any alphabetic character */
 	  switch (*s)
-	  {
-	  case('A'):
-		break;
-	  case('T'):
-		break;
-	  case('G'):
-		break;
-	  case('C'):
-		break;
-	  default:
-		continue;
-	  }
+		  {
+		  case('A'):
+			break;
+		  case('T'):
+			break;
+		  case('G'):
+			break;
+		  case('C'):
+			break;
+		  case('\n'):
+			continue;
+		  default:
+			printf("Invalid character \"%c\" at position %d in sequence %s\n", *s, n, name);
+			return 0;
+		  }
 	  seq[n] = *s;                  /* store the character, bump length n */
 	  n++;
 	  if (nalloc == n)	        /* are we out of room in seq? if so, expand */
@@ -534,7 +536,7 @@ ReadCounts *get_sequence_counts_direct_hash_rev_cmp(HashTable *seq_read_nums,
 			hash += 3;
 			break;
 		default:
-			printf("Invalid character \"%c\" in sequence", sequence[i]);
+			printf("Invalid character \"%c\" in sequence", *sequence);
 			return NULL;
 		}
 		revcmp_hash = revcmp_hash >> 2;
@@ -559,7 +561,7 @@ ReadCounts *get_sequence_counts_direct_hash_rev_cmp(HashTable *seq_read_nums,
 			hash += 3;
 			break;
 		default:
-			printf("Invalid character \"%c\" in sequence", sequence[i]);
+			printf("Invalid character \"%c\" in sequence", *sequence);
 			return NULL;
 		}
 		//Get counts from the hash
@@ -812,6 +814,7 @@ void calc_and_write_output(HashTable *sRNA_read_counts, char *input_filename, ch
 	}
 	FASTAFILE *fasta_file;
 	ReadCounts *read_counts;
+	read_counts = NULL;
 	//Assign memory for the sequence window
 	seq_window = malloc(sizeof(char) * (window_size+1));
 	//Null terminate the string
@@ -819,6 +822,7 @@ void calc_and_write_output(HashTable *sRNA_read_counts, char *input_filename, ch
 	fasta_file = OpenFASTA(input_filename);
 	begin = clock();
 	while (ReadFASTA(fasta_file, &seq, &name, &length) != 0){
+		printf("Length: %d", length);
 		read_time += clock()-begin;
 		//Sequences less than the window size won't be bound to
 		if (length < window_size){
@@ -869,7 +873,10 @@ void calc_and_write_output(HashTable *sRNA_read_counts, char *input_filename, ch
 		}
 	//Free the memory allocated for the struct
 	free(seq_window);
-	free(read_counts);
+	//TODO is this required?
+	if (read_counts != NULL){
+		free(read_counts);
+	}
 	//Free the input and output files
 	CloseFASTA(fasta_file);
 	fclose(output_file);

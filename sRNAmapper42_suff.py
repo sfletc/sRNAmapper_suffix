@@ -583,7 +583,9 @@ class Ref_Dict(Dicter):
         self.ref_dict.update({'f'+key:DNA(full_len_seq)})
         self.ref_dict.update({'r'+key:(DNA(full_len_seq)).complement()}) 
         
-        
+        for key,value in self.ref_dict.items():
+            print key
+            print len(value)
         return self.ref_dict
         
     # def suffix_ref(self, ref_filename):
