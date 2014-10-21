@@ -11,7 +11,10 @@
 //     or implied. See the License for the specific language governing
 //     permissions and limitations under the Lircense.
 #include <stdio.h>
+<<<<<<< HEAD
 #include <ctype.h>
+=======
+>>>>>>> ab8600ac85e1cb3f31b62aafb1754671bf69dd52
 #include <stdlib.h>
 #include <assert.h>
 #include <inttypes.h>
@@ -171,10 +174,15 @@ ReadFASTA(FASTAFILE *ffp, char **ret_seq, char **ret_name, int *ret_L)
   char *s;
   char *name;
   char *seq;
+<<<<<<< HEAD
+=======
+//  int *seq_length;
+>>>>>>> ab8600ac85e1cb3f31b62aafb1754671bf69dd52
   int   n;
   int   nalloc;
 
   /* Peek at the lookahead buffer; see if it appears to be a valid FASTA descline.
+<<<<<<< HEAD
    */
   if (ffp->buffer[0] != '>') return 0;
 
@@ -216,6 +224,49 @@ ReadFASTA(FASTAFILE *ffp, char **ret_seq, char **ret_name, int *ret_L)
 			return 0;
 		  }
 	  seq[n] = *s;                  /* store the character, bump length n */
+=======
+     */
+    if (ffp->buffer[0] != '>') return 0;
+
+    /* Parse out the name: the first non-whitespace token after the >
+     * Jason: Altered this to allow spaces and terminate at newline
+     */
+    s  = strtok(ffp->buffer+1, "\t\n");
+    name = malloc(sizeof(char) * (strlen(s)+1));
+    strcpy(name, s);
+
+    /* Everything else 'til the next descline is the sequence.
+     * Note the idiom for dynamic reallocation of seq as we
+     * read more characters, so we don't have to assume a maximum
+     * sequence length.
+     */
+    seq = malloc(sizeof(char) * 128);     /* allocate seq in blocks of 128 residues */
+    nalloc = 128;
+    n = 0;
+    while (fgets(ffp->buffer, FASTA_MAXLINE, ffp->fp))
+      {
+        if (ffp->buffer[0] == '>') break;	/* a-ha, we've reached the next descline */
+
+        for (s = ffp->buffer; *s != '\0'; s++)
+  	{
+      //Only accept sequence characters
+      //Jason: altered this so that it explicitly deals with the expected characters in a fasta file instead of using isalpha
+	  switch (*s)
+	  {
+	  case('A'): case('T'): case('G'): case('C'): case('N'):
+		seq[n] = *s;
+		break;
+	  case('K'): case('M'): case('R'): case('Y'): case('S'): case('W'): case('B'): case('V'): case('H'): case('D'): case('X'):
+		//Replace the character with out canonical way of representing an ambiguous base - 'N'
+	    seq[n] = 'N';
+	    break;
+	  case('\n'):
+		continue;
+	  default:
+		  printf("Invalid character \"%c\" at position %d in sequence %s", *s, n, name);
+		  return 0;
+	  }
+>>>>>>> ab8600ac85e1cb3f31b62aafb1754671bf69dd52
 	  n++;
 	  if (nalloc == n)	        /* are we out of room in seq? if so, expand */
 	    {			        /* (remember, need space for the final '\0')*/
@@ -499,7 +550,11 @@ uint64_t reverse_bits(uint64_t input) {
 //;
 
 ReadCounts *get_sequence_counts_direct_hash_rev_cmp(HashTable *seq_read_nums,
+<<<<<<< HEAD
 		char* sequence, uint32_t sequence_length, short window_size) {
+=======
+		char* sequence, int sequence_length, short window_size) {
+>>>>>>> ab8600ac85e1cb3f31b62aafb1754671bf69dd52
 	uint32_t *fwd_counts, *rev_counts;
 	uint32_t count;
 	uint64_t hash, revcmp_hash;
@@ -515,6 +570,7 @@ ReadCounts *get_sequence_counts_direct_hash_rev_cmp(HashTable *seq_read_nums,
 		printf("Error allocating memory");
 		exit(1);
 	}
+<<<<<<< HEAD
 	int i;
 	//Initialise the hashes with the first few characters of the sequence
 	hash = 0;
@@ -583,6 +639,88 @@ ReadCounts *get_sequence_counts_direct_hash_rev_cmp(HashTable *seq_read_nums,
 		hash = hash >> num_leading_bits;
 		sequence++;
 	}
+=======
+	int i; // The number of bases from the sequence iterated through
+	hash = 0;
+	revcmp_hash = 0;
+	i = 0;
+	while(i < sequence_length){
+		//Build the hash with a full window from the next window of characters
+		for (i = 0; i<(window_size-1); ++i) {
+			switch (*sequence) {
+			case 'T':
+				revcmp_hash += 3LL<<(sizeof(revcmp_hash)*8-2); //11 at the first postion 11...00
+				break;
+			case 'C':
+				hash += 1;
+				revcmp_hash += 2LL<<(sizeof(revcmp_hash)*8-2); //10 at the first position 10...00
+				break;
+			case 'G':
+				hash += 2;
+				revcmp_hash += 1LL<<(sizeof(revcmp_hash)*8-2); //01 at the first position 01...00
+				break;
+			case 'A':
+				hash += 3;
+				break;
+			default:
+				printf("Invalid character \"%c\" in sequence", *sequence);
+				return NULL;
+			}
+			revcmp_hash = revcmp_hash >> 2;
+			hash = hash << 2;
+			sequence++;
+		}
+		//Test the window against stored sRNAs. If a ambiguous character is encountered then rebuild the hash and continue.
+		while (i < sequence_length) {
+			switch (*sequence) {
+			case 'T':
+				revcmp_hash += 3LL<<(sizeof(revcmp_hash)*8-2); //01 at the first position 01...00
+				hash += 0;
+				break;
+			case 'C':
+				hash += 1;
+				revcmp_hash += 2LL<<(sizeof(revcmp_hash)*8-2); //01 at the first position 01...00
+				break;
+			case 'G':
+				hash += 2;
+				revcmp_hash += 1LL<<(sizeof(revcmp_hash)*8-2); //01 at the first position 01...00
+				break;
+			case 'A':
+				hash += 3;
+				revcmp_hash += 0;
+				break;
+			default:
+				printf("Invalid character \"%c\" in sequence", sequence[i]);
+				return NULL;
+			}
+			//Get counts from the hash
+			count = get(seq_read_nums, hash);
+			//Put the count in the first position of the window (5' end)
+			if (count != -1) {
+				fwd_counts[i] += count;
+			}
+			//Push the reverse complement hash back
+			revcmp_hash = revcmp_hash>>num_leading_bits;
+			count = get(seq_read_nums, revcmp_hash);
+			if (count != -1) {
+				//Put the count in the same position
+				rev_counts[i] += count;
+			}
+			//Clear the leading bits from the hash and leave space for the next assignment
+			revcmp_hash = revcmp_hash<<(num_leading_bits-2);
+			hash = hash << (num_leading_bits+2);
+			hash = hash >> num_leading_bits;
+			sequence++;
+		}
+	}
+
+
+
+
+
+	//Each hash from this point onwards will be a new window of sequence in forward and reverse
+
+>>>>>>> ab8600ac85e1cb3f31b62aafb1754671bf69dd52
 	//Assign the output counts
 	read_counts->fwd_counts = fwd_counts;
 	read_counts->rev_counts = rev_counts;
@@ -640,6 +778,10 @@ uint64_t hash_seq(char *sequence, short sequence_length) {
 	case 'A':
 		hash += 3;
 		break;
+<<<<<<< HEAD
+=======
+	case 'N':
+>>>>>>> ab8600ac85e1cb3f31b62aafb1754671bf69dd52
 	default:
 		printf("Invalid character \"%c\"", *sequence);
 		return -1;
@@ -814,7 +956,10 @@ void calc_and_write_output(HashTable *sRNA_read_counts, char *input_filename, ch
 	}
 	FASTAFILE *fasta_file;
 	ReadCounts *read_counts;
+<<<<<<< HEAD
 	read_counts = NULL;
+=======
+>>>>>>> ab8600ac85e1cb3f31b62aafb1754671bf69dd52
 	//Assign memory for the sequence window
 	seq_window = malloc(sizeof(char) * (window_size+1));
 	//Null terminate the string
@@ -822,7 +967,10 @@ void calc_and_write_output(HashTable *sRNA_read_counts, char *input_filename, ch
 	fasta_file = OpenFASTA(input_filename);
 	begin = clock();
 	while (ReadFASTA(fasta_file, &seq, &name, &length) != 0){
+<<<<<<< HEAD
 		printf("Length: %d", length);
+=======
+>>>>>>> ab8600ac85e1cb3f31b62aafb1754671bf69dd52
 		read_time += clock()-begin;
 		//Sequences less than the window size won't be bound to
 		if (length < window_size){
@@ -873,10 +1021,14 @@ void calc_and_write_output(HashTable *sRNA_read_counts, char *input_filename, ch
 		}
 	//Free the memory allocated for the struct
 	free(seq_window);
+<<<<<<< HEAD
 	//TODO is this required?
 	if (read_counts != NULL){
 		free(read_counts);
 	}
+=======
+	free(read_counts);
+>>>>>>> ab8600ac85e1cb3f31b62aafb1754671bf69dd52
 	//Free the input and output files
 	CloseFASTA(fasta_file);
 	fclose(output_file);

@@ -20,7 +20,6 @@ from collections import Counter
 import time
 import argparse
 import csv
-import os
 # from suffix_tree import *
       
 class User_Input(object):
@@ -48,6 +47,7 @@ class User_Input(object):
         
         parser.add_argument("-s1", "--seqfile1", type=str,
                 help = "sequence file name 1")
+                
         parser.add_argument("-s2", "--seqfile2", type=str,
                 help = "sequence file name 2")
 
@@ -237,7 +237,6 @@ class Analysis(object):
         start = time.clock()
         samp1 = self._samp1.align_seq(seq_dict[0], ref_dict, nt1).hit_counter()
         out_samp1 = Out_Put(samp1)
-
         out_samp1.write2csv(out_file).den_map_plot(seq1, ref1, a, w)  
         
 
@@ -583,9 +582,7 @@ class Ref_Dict(Dicter):
         self.ref_dict.update({'f'+key:DNA(full_len_seq)})
         self.ref_dict.update({'r'+key:(DNA(full_len_seq)).complement()}) 
         
-        for key,value in self.ref_dict.items():
-            print key
-            print len(value)
+        
         return self.ref_dict
         
     # def suffix_ref(self, ref_filename):
@@ -705,7 +702,9 @@ class Seq_Dict(Dicter):
         self.loaded_seq = self.filename.load_dict()
         count = 0
         for i in self.loaded_seq:
-            a = i.strip()
+        
+            a = i.strip() 
+
             b = a.split('\t')
             count += int(b[1])
             if int(b[0]) == nt:
@@ -864,8 +863,7 @@ class Align_Seq(object):
         """need to remove nt from calling functions as not needed.  Also f and count_start
         """
 
-        for \
-            header, seq in ref_dict1.items():
+        for header, seq in ref_dict1.items():
 
             if seq in seq_dict1:
                 self._results.append([header, seq, int(seq_dict1[seq]), 0, 'f'])
