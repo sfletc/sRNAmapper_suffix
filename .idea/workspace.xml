@@ -5,18 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d3ecad0a-e916-489d-bdde-076e7f583a17" name="Default" comment="">
-      <change type="DELETED" beforePath="C:\Users\Jason\Documents\SRNAMapper\sRNAmapper_suffix\Debug\sRNAMapper.o" afterPath="" />
       <change type="DELETED" beforePath="C:\Users\Jason\Documents\SRNAMapper\sRNAmapper_suffix\Debug\sRNAMapperC.exe" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\Jason\Documents\SRNAMapper\sRNAmapper_suffix\Old\sRNAMapper.c" afterPath="" />
       <change type="DELETED" beforePath="C:\Users\Jason\Documents\SRNAMapper\sRNAmapper_suffix\Release\sRNAMapperC.exe" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\Jason\Documents\SRNAMapper\sRNAmapper_suffix\sRNAMapper_new.c" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.cproject" afterPath="$PROJECT_DIR$/.cproject" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/fasta.h" afterPath="$PROJECT_DIR$/fasta.h" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.settings/org.eclipse.cdt.managedbuilder.core.prefs" afterPath="$PROJECT_DIR$/.settings/org.eclipse.cdt.managedbuilder.core.prefs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sRNAMapper.c" afterPath="$PROJECT_DIR$/sRNAMapper.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sRNAmapper42_suff.py" afterPath="$PROJECT_DIR$/sRNAmapper42_suff.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/readme.txt" afterPath="$PROJECT_DIR$/readme.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test_sequences.fa" afterPath="$PROJECT_DIR$/test_sequences.fa" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="sRNAmapper_suffix.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/Dummy.txt" changelist="d3ecad0a-e916-489d-bdde-076e7f583a17" time="1413731054560" ignored="false" />
+    <file path="/Dummy.txt" changelist="d3ecad0a-e916-489d-bdde-076e7f583a17" time="1414054406567" ignored="false" />
     <file path="/sRNAmapper42_suff.py" changelist="d3ecad0a-e916-489d-bdde-076e7f583a17" time="1413631450843" ignored="false" />
     <file path="/Python Console" changelist="d3ecad0a-e916-489d-bdde-076e7f583a17" time="1412393609293" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -41,10 +43,8 @@
       <file leaf-file-name="sRNAmapper42_suff.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/sRNAmapper42_suff.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="910" column="0" selection-start="30941" selection-end="31331" vertical-scroll-proportion="0.34961438">
-              <folding>
-                <element signature="e#626#643#0" expanded="true" />
-              </folding>
+            <state line="934" column="8" selection-start="32223" selection-end="32223" vertical-scroll-proportion="0.02866779">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -129,8 +129,8 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="recentsLimit" value="5" />
-    <property name="restartRequiresConfirmation" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="restartRequiresConfirmation" value="true" />
     <property name="FullScreen" value="false" />
   </component>
   <component name="PyConsoleOptionsProvider">
@@ -156,7 +156,7 @@
       <module name="sRNAmapper_suffix" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/sRNAmapper42_suff.py" />
-      <option name="PARAMETERS" value="-ana dm -s1  sRNA_test_1.txt -r test_sequences.fa -nt1 5 -o python_test.csv" />
+      <option name="PARAMETERS" value="-ana dm -s1  sRNA_test_1.txt -r test_sequences.fa -nt1 5 -o python_out_test.csv" />
       <RunnerSettings RunnerId="PyDebugRunner" />
       <RunnerSettings RunnerId="PythonRunner" />
       <ConfigurationWrapper RunnerId="PyDebugRunner" />
@@ -266,11 +266,11 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18780488" sideWeight="0.6704362" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19756098" sideWeight="0.67205167" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3990307" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32956383" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3279483" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -347,36 +347,42 @@
     <entry file="file://$PROJECT_DIR$/sRNAmapper42_suff.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="e#626#643#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/sRNAmapper42_suff.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="e#626#643#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/sRNAmapper42_suff.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="e#626#643#0" expanded="true" />
-          </folding>
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sRNAmapper42_suff.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sRNAmapper42_suff.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/sRNAmapper42_suff.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="624" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="e#626#643#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -387,10 +393,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/sRNAmapper42_suff.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="910" column="0" selection-start="30941" selection-end="31331" vertical-scroll-proportion="0.34961438">
-          <folding>
-            <element signature="e#626#643#0" expanded="true" />
-          </folding>
+        <state line="934" column="8" selection-start="32223" selection-end="32223" vertical-scroll-proportion="0.02866779">
+          <folding />
         </state>
       </provider>
     </entry>
