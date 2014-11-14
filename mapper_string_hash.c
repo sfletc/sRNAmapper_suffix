@@ -18,6 +18,7 @@
 #include <time.h>
 #include "mapper_string.h"
 
+
 //Analysis variables
 clock_t read_time = 0;
 clock_t write_time = 0;
