@@ -9,27 +9,7 @@
 #include <time.h>
 #include "util.h"
 #include "fasta.h" //Header file from fasta library
-
-//A basic linked list format with the list stored as a perfect hash
-typedef struct _LinkedList_ {
-	uint32_t num_reads; //The number of reads from RNA-seq of this exact sequence
-	uint64_t string; //The sequence in two-bit format
-	struct _LinkedList_ *next;
-} LinkedList;
-//A basic linked list format with the sequence stored as a character array
-
-typedef struct _HashTable_ {
-	uint32_t num_bins; /* the size of the table */
-	LinkedList **bins; //This strictly doesn't need to
-} HashTable;
-
-//2Bit hash table
-HashTable *create_hash_table_2bit(uint32_t num_bins);
-void put_2bit(HashTable *hash_table, uint64_t sequence, uint32_t num_reads);
-uint32_t get_2bit(HashTable *hash_table, uint64_t sequence);
-void iterate_and_add_2bit(LinkedList *existing_list, uint64_t sequence,
-		uint32_t num_reads);
-uint64_t hash_seq(char*, short);
+#include "mapper_ours.h"
 
 //Timing variables
 clock_t read_time = 0;
@@ -395,6 +375,8 @@ HashTable *read_sRNAs(char *filename, short required_read_length,
 	fclose(file);
 	return seq_read_nums;
 };
+
+
 
 void calc_and_write_output(HashTable *sRNA_read_counts, char *input_filename,
 		char* output_filename, short window_size) {

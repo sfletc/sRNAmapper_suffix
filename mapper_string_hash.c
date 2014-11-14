@@ -1,4 +1,9 @@
-
+/*
+ * A script for reading a series of sRNAs read counts and
+ * mapping exact matches to positions on a reference sequence.
+ * This implementation utilises a standard string hashing function
+ * and string hash table to map the reads.
+ */
 
 #include "util.h"
 #include <stdio.h>
@@ -11,42 +16,22 @@
 #include <math.h>
 #include "fasta.h" //Header file from fasta library
 #include <time.h>
+#include "mapper_string.h"
 
-typedef struct _StringLinkedList_ {
-	uint32_t num_reads;
-	char* string;
-	struct _StringLinkedList_ *next;
-} StringLinkedList;
-
-typedef struct _StringHashTable_ {
-	uint32_t num_bins; /* the size of the table */
-	StringLinkedList **bins; //This strictly doesn't need to
-} StringHashTable;
-
-
-
-//String hash table
-StringHashTable *create_hash_table_string(uint32_t num_bins);
-void put_string(StringHashTable *hash_table, char *string, short string_length,
-		uint32_t num_reads);
-uint32_t get_counts_from_string(StringHashTable *hash_table,
-		char *sequence, short window_size);
-void iterate_and_add_from_string(StringLinkedList *existing_list,
-		char *string, short string_length, uint32_t num_reads);
-
-uint64_t hash_string(char *string);
-void revcmp_seq(char *input, char **output, int num_chars);
-
-//Timing variables
+//Analysis variables
 clock_t read_time = 0;
 clock_t write_time = 0;
-clock_t scan_time = 0;
+clock_t scan_time = 0;//A basic linked list format with the list stored as a perfect hash
 clock_t build_hashtable_time = 0;
 clock_t read_sRNAs_time = 0;
 int num_collisions = 0;
 long num_sRNA_reads = 0;
-
-//#################Generic string hash table###########################################
+/**
+ * Initialise a hash table that maps sequence strings to integers.
+ *
+ * The function allocates space for the struct and the linked lists
+ * in the bins
+ */
 StringHashTable *create_hash_table_string(uint32_t num_bins) {
 	if (num_bins < 1) {
 		printf("%d is an invalid number of bins\n", num_bins);
@@ -66,10 +51,10 @@ StringHashTable *create_hash_table_string(uint32_t num_bins) {
 }
 
 /**
- * Add a string to the hash table. If there is nothing in the bin create a new linked
- * list element and add it to the bin. If there is something in the bin continue along the
- * the list, if there is a match add the read count to the match, if there is no match add
- * this sequence to the end
+ * This function adds an sRNA sequence to the hash table. If there is nothing in the bin it creates
+ * a new linked list element and adds it to the bin. If there is something in the bin it
+ * continues along the list and if there is a match the read count is added to the match,
+ * if there is no match the new sequence is added to the end of the list.
  */
 void put_string(StringHashTable *hash_table, char *string, short string_length,
 		uint32_t num_reads) {
@@ -95,15 +80,16 @@ void put_string(StringHashTable *hash_table, char *string, short string_length,
 	//There is something in the bin. Iterate through the list. If this sequence is already present then don't put it in again.
 	else {
 		num_collisions += 1;
-		iterate_and_add_from_string(existing_list, string, string_length,  num_reads);
+		iterate_and_add_from_string(existing_list, string, string_length,
+				num_reads);
 	}
 }
 
-/**
+/* Access the value of an element in the hash table.
  *
  */
-uint32_t get_counts_from_string(StringHashTable *hash_table,
-		char *sequence, short window_size) {
+uint32_t get_counts_from_string(StringHashTable *hash_table, char *sequence,
+		short window_size) {
 	uint32_t bin_num;
 	StringLinkedList *existing_list;
 	StringLinkedList *listIt;
@@ -120,6 +106,7 @@ uint32_t get_counts_from_string(StringHashTable *hash_table,
 			}
 		}
 	}
+	//Otherwise there is no match - return -1
 	return -1;
 }
 
@@ -127,8 +114,8 @@ uint32_t get_counts_from_string(StringHashTable *hash_table,
  * the new element to the match. If the match isn't found add the element to
  * the end of the list
  */
-void iterate_and_add_from_string(StringLinkedList *existing_list,
-		char *string, short string_length, uint32_t num_reads) {
+void iterate_and_add_from_string(StringLinkedList *existing_list, char *string,
+		short string_length, uint32_t num_reads) {
 	StringLinkedList *listIt;
 	for (listIt = existing_list; listIt->next != NULL ; listIt = listIt->next) {
 		//If the sequence is already present add this count to the previous count and return
@@ -154,9 +141,11 @@ void iterate_and_add_from_string(StringLinkedList *existing_list,
 	new_element->next = NULL;
 	listIt->next = new_element;
 }
-
-
-//The djb2 string hash function
+/**
+ * Calculate the hash value for a string.
+ *
+ * This is an implementation of the djb2 string hash function
+ */
 uint64_t hash_string(char *string) {
 	{
 		uint64_t hash = 5381;
@@ -167,6 +156,12 @@ uint64_t hash_string(char *string) {
 	}
 }
 
+/**
+ * Get the reverse complement of a sequence and return in in output.
+ *
+ * This could be changed to recognise the null terminator instead of requiring
+ * the nummber of characters.
+ */
 void revcmp_seq(char *input, char **output, int num_chars) {
 	char *temp;
 	int i;
@@ -176,19 +171,19 @@ void revcmp_seq(char *input, char **output, int num_chars) {
 	input = input + (num_chars - 1);
 	//We've already reached the first position
 	while (i < num_chars) {
-		switch (*input){
-			case ('A'):
-				*temp =	'T';
-				break;
-			case ('T'):
-				*temp =	'A';
-				break;
-			case ('G'):
-				*temp =	'C';
-				break;
-			case ('C'):
-				*temp =	'G';
-				break;
+		switch (*input) {
+		case ('A'):
+			*temp = 'T';
+			break;
+		case ('T'):
+			*temp = 'A';
+			break;
+		case ('G'):
+			*temp = 'C';
+			break;
+		case ('C'):
+			*temp = 'G';
+			break;
 		}
 		//Dereference both pointers and assign output to input
 		input--;
@@ -200,9 +195,20 @@ void revcmp_seq(char *input, char **output, int num_chars) {
 }
 ;
 
+/** Map the sRNA reads on to a reference sequence and return a
+ * forward and reverse array with the number of reads mapped to
+ * each position.
+ *
+ * The return arrays are of length (sequence_length - window_size + 1)
+ * which is the number of available positions for the read to map. The function
+ * iterates through the reference sequence, and checks in the given sRNA hash
+ * table if the window is present. If it is present then the reads are mapped
+ * to the smallest index of the window.
+ *
+ */
 ReadCounts *get_sequence_counts_reverse_window_string_hash(
-		StringHashTable *sRNA_count_hashtable, char* sequence, uint32_t sequence_length,
-		short window_size) {
+		StringHashTable *sRNA_count_hashtable, char* sequence,
+		uint32_t sequence_length, short window_size) {
 	//Slice all of the characters in the sequence
 	char *window, *rev_complement;
 	uint32_t *fwd_counts, *rev_counts;
@@ -222,26 +228,28 @@ ReadCounts *get_sequence_counts_reverse_window_string_hash(
 	// the window
 	for (i = 0; i < sequence_length - window_size + 1; ++i) {
 		//If the next character is an ambiguous character make sure the hashing is skipped
-		if (sequence[window_size-1] == 'N'){
+		if (sequence[window_size - 1] == 'N') {
 			reset = window_size;
 		}
-		if (reset != 0){
+		if (reset != 0) {
 			--reset;
 			++sequence;
 			continue;
 		}
 		//Get the window
+		//TODO This copying may not be necessary - we are just getting a hash.
 		memcpy(window, sequence, window_size);
 //		printf("%s\n", window);
 		++sequence;
-		count = get_counts_from_string(sRNA_count_hashtable, window, window_size);
+		count = get_counts_from_string(sRNA_count_hashtable, window,
+				window_size);
 		if (count != -1) {
 			fwd_counts[i] += count;
 		}
-		//Get the reverse compliment hash
+		//Get the reverse compliment sequence
 		revcmp_seq(window, &rev_complement, window_size);
-//		printf("%s\n", rev_complement);
-		count = get_counts_from_string(sRNA_count_hashtable, rev_complement, window_size);
+		count = get_counts_from_string(sRNA_count_hashtable, rev_complement,
+				window_size);
 		if (count != -1) {
 			rev_counts[i] += count;
 		}
@@ -255,6 +263,7 @@ ReadCounts *get_sequence_counts_reverse_window_string_hash(
 	return read_counts;
 }
 ;
+
 
 StringHashTable *read_sRNAs_string(char *filename, short required_read_length,
 		uint32_t num_bins) {
@@ -318,11 +327,11 @@ StringHashTable *read_sRNAs_string(char *filename, short required_read_length,
 	//Free the file
 	fclose(file);
 	return seq_read_nums;
-};
+}
+;
 
-
-void calc_and_write_output_string(StringHashTable *sRNA_read_counts, char *input_filename,
-		char* output_filename, short window_size) {
+void calc_and_write_output_string(StringHashTable *sRNA_read_counts,
+		char *input_filename, char* output_filename, short window_size) {
 	char *seq, *seq_window;
 	char *name;
 	clock_t begin;
@@ -440,8 +449,8 @@ int main(int argc, char *argv[]) {
 	printf("Time taken reading sRNAs: %2.2fs\n",
 			((double) read_sRNAs_time) / CLOCKS_PER_SEC);
 	begin = clock();
-	calc_and_write_output_string(seq_read_counts, reference_filename, output_filename,
-			width);
+	calc_and_write_output_string(seq_read_counts, reference_filename,
+			output_filename, width);
 	printf("Number of hash collisions: %d from %d sequences - %0.2f%%\n",
 			(int) num_collisions, (int) num_sRNA_reads,
 			((float) num_collisions) / ((float) num_sRNA_reads) * 100);
@@ -593,6 +602,4 @@ int main(int argc, char *argv[]) {
 	return 1;
 }
 ;
-
-
 

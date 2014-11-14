@@ -5,6 +5,9 @@
  *      Author: Jason
  */
 #include <inttypes.h>
+
+
+
 extern void reverse_char_array(char*, char**, int);
 
 typedef struct _ReadCounts_ {
